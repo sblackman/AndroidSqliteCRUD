@@ -21,13 +21,13 @@ public class BeneficiaryRecyclerAdapter extends RecyclerView.Adapter<Beneficiary
     private ArrayList<Beneficiary> listBeneficiary;
     public ImageView overflow;
     private Context mContext;
-    private ArrayList<Beneficiary> mFilteredList;
+
 
 
     public BeneficiaryRecyclerAdapter(ArrayList<Beneficiary> listBeneficiary, Context mContext) {
         this.listBeneficiary = listBeneficiary;
         this.mContext = mContext;
-        this.mFilteredList = listBeneficiary;
+
 
 
     }
@@ -77,7 +77,13 @@ public class BeneficiaryRecyclerAdapter extends RecyclerView.Adapter<Beneficiary
 
     @Override
     public int getItemCount() {
-        return mFilteredList.size();
+        return listBeneficiary.size();
+    }
+
+    public void setFilter(ArrayList<Beneficiary> newList) {
+        listBeneficiary = new ArrayList<>();
+        listBeneficiary.addAll(newList);
+        notifyDataSetChanged();
     }
 
 

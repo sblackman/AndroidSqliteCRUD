@@ -5,12 +5,16 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,7 +26,7 @@ import au.id.sblackman.androidsqlitecrud.sql.DatabaseHelper;
 /**
  * Created by delaroy on 5/10/17.
  */
-public class BeneficiaryListActivity extends AppCompatActivity {
+public class BeneficiaryListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
 
     private AppCompatActivity activity = BeneficiaryListActivity.this;
     Context context = BeneficiaryListActivity.this;
@@ -30,8 +34,8 @@ public class BeneficiaryListActivity extends AppCompatActivity {
     private ArrayList<Beneficiary> listBeneficiary;
     private BeneficiaryRecyclerAdapter beneficiaryRecyclerAdapter;
     private DatabaseHelper databaseHelper;
-    SearchView searchBox;
-    private ArrayList<Beneficiary> filteredList;
+
+
 
 
 
@@ -92,9 +96,21 @@ public class BeneficiaryListActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.beneficiary_search, menu);
 
+        MenuItem search = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
+        searchView.setOnQueryTextListener(this);
+        return true;
 
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
 
     /**
      * This method is to fetch all user records from SQLite
@@ -116,5 +132,24 @@ public class BeneficiaryListActivity extends AppCompatActivity {
                 beneficiaryRecyclerAdapter.notifyDataSetChanged();
             }
         }.execute();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        newText = newText.toLowerCase();
+        ArrayList<Beneficiary> newList = new ArrayList<>();
+        for (Beneficiary beneficiary : listBeneficiary) {
+           String name = beneficiary.getName().toLowerCase();
+           if (name.contains(newText)) {
+               newList.add(beneficiary);
+           }
+        }
+        beneficiaryRecyclerAdapter.setFilter(newList);
+        return true;
     }
 }
